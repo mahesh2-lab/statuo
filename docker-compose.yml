@@ -57,11 +57,11 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      DATABASE_URL: postgresql://${POSTGRES_USER:-statuo_user}:${POSTGRES_PASSWORD:-2004}@postgres:5432/${POSTGRES_DB:-statuo_db}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-statuo_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-statuo_db}
       REDIS_URL: redis://redis:6379
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-9d8f3a1e7b6c5420fedcba9876543210123456789abcdef0123456789abcdef}
-      BETTER_AUTH_API_KEY: ${BETTER_AUTH_API_KEY:-ba_8491m3lip9l6a8jydnk2x7a1sqs8fy7r}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
+      BETTER_AUTH_API_KEY: ${BETTER_AUTH_API_KEY}
       CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
     ports:
       - "${PORT:-3000}:3000"
