@@ -1,0 +1,86 @@
+name: statuo
+
+services:
+  # =========================================================================
+  # 1. PostgreSQL Database Service
+  # =========================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: statuo_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-statuo_db}
+      POSTGRES_USER: ${POSTGRES_USER:-statuo_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-2004}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-statuo_user} -d ${POSTGRES_DB:-statuo_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - statuo_network
+
+  # =========================================================================
+  # 2. Redis Pub/Sub & Caching Service
+  # =========================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: statuo_redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - statuo_network
+
+  # =========================================================================
+  # 3. Statuo Unified Fullstack Application (Frontend + Backend + Scheduler)
+  # =========================================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: statuo_app
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER:-statuo_user}:${POSTGRES_PASSWORD:-2004}@postgres:5432/${POSTGRES_DB:-statuo_db}
+      REDIS_URL: redis://redis:6379
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-9d8f3a1e7b6c5420fedcba9876543210123456789abcdef0123456789abcdef}
+      BETTER_AUTH_API_KEY: ${BETTER_AUTH_API_KEY:-ba_8491m3lip9l6a8jydnk2x7a1sqs8fy7r}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+    ports:
+      - "${PORT:-3000}:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - statuo_network
+
+# Persistent Data Volumes
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+# Internal Network
+networks:
+  statuo_network:
+    driver: bridge

@@ -1,0 +1,29 @@
+{
+	"name": "statuo-backend",
+	"dependencies": {
+		"@better-auth/drizzle-adapter": "^1.6.27",
+		"@better-auth/infra": "^0.3.7",
+		"better-auth": "^1.6.27",
+		"cors": "^2.8.6",
+		"dotenv": "^17.4.2",
+		"drizzle-orm": "0.45.2",
+		"express": "^5.2.1",
+		"ioredis": "^6.0.0",
+		"node-cron": "^4.6.0",
+		"pg": "^8.23.0",
+		"zod": "^4.4.3"
+	},
+	"devDependencies": {
+		"@types/cors": "^2.8.19",
+		"@types/express": "^5.0.6",
+		"@types/node": "^26.2.0",
+		"@types/pg": "^8.21.0",
+		"drizzle-kit": "0.31.10",
+		"tsx": "^4.23.12",
+		"typescript": "^7.0.2"
+	},
+	"scripts": {
+		"dev": "tsx watch src/index.ts",
+		"start": "tsx src/index.ts"
+	}
+}
