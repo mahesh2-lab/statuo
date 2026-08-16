@@ -1,4 +1,4 @@
-# ⚡ Statuo (Pulse)
+# ⚡ Statuo
 
 <div align="center">
 
@@ -6,6 +6,7 @@
 
 **High-Velocity Observability, Distributed Synthetic Telemetry, and Endpoint Health Monitoring**
 
+[![GitHub](https://img.shields.io/badge/GitHub-mahesh2--lab%2Fstatuo-181717?style=flat-square&logo=github)](https://github.com/mahesh2-lab/statuo)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x%20%7C%207.x-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-19.2-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8.x-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
@@ -103,7 +104,7 @@ flowchart TD
 ## 📁 Repository Structure
 
 ```
-pulse/
+statuo/
 ├── backend/                        # Express 5 & Better Auth Backend
 │   ├── better-auth_migrations/     # Database migration scripts for auth
 │   ├── drizzle/                    # Drizzle ORM migration files
@@ -160,8 +161,8 @@ Ensure you have the following installed locally:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-org/pulse.git
-   cd pulse
+   git clone https://github.com/mahesh2-lab/statuo.git
+   cd statuo
    ```
 
 2. **Set up environment variables:**
@@ -313,7 +314,7 @@ pnpm typecheck        # Run TypeScript typechecks without emitting code
 
 Contributions, bug reports, and feature requests are welcome!
 
-1. Fork the repository
+1. Fork the repository ([https://github.com/mahesh2-lab/statuo](https://github.com/mahesh2-lab/statuo))
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'feat: add amazing new probe protocol'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
