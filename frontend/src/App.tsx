@@ -17,6 +17,7 @@ import { LogsPage } from './pages/LogsPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { DocsPage } from './pages/DocsPage';
+import { LandingPage } from './pages/LandingPage';
 
 export function App() {
   return (
@@ -26,6 +27,9 @@ export function App() {
           <TooltipProvider delayDuration={150}>
             <BrowserRouter>
               <Routes>
+                {/* Public Landing Page */}
+                <Route path="/" element={<LandingPage />} />
+
                 {/* Public Auth Routes */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/sign-in" element={<LoginPage />} />
@@ -36,7 +40,6 @@ export function App() {
 
                 {/* Authenticated Dashboard Shell Routes */}
                 <Route element={<AppShell />}>
-                  <Route path="/" element={<DashboardPage />} />
                   <Route path="/dashboard" element={<DashboardPage />} />
                   <Route path="/jobs" element={<JobsPage />} />
                   <Route path="/jobs/:id" element={<JobDetailPage />} />
