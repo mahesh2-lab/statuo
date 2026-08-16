@@ -31,7 +31,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const location = useLocation()
 
   const navItems = [
-    { label: "Dashboard", to: "/", icon: LayoutDashboard },
+    { label: "Dashboard", to: "/dashboard", icon: LayoutDashboard },
     { label: "Monitors & Jobs", to: "/jobs", icon: Activity },
     { label: "Analytics", to: "/analytics", icon: BarChart3 },
     { label: "Audit Events", to: "/events", icon: Radio },
