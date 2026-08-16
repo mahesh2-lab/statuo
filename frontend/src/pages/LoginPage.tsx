@@ -51,14 +51,14 @@ export const LoginPage: React.FC = () => {
   }
 
   if (session && ((session as any).user || (session as any).id)) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
       await signIn({ email: data.email, password: data.password });
       toast.success('Welcome back to Statuo');
-      navigate('/');
+      navigate('/dashboard');
     } catch {
       // Handled by react query error state
     }

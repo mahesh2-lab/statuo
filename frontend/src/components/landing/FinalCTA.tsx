@@ -3,7 +3,12 @@ import { ArrowRight, Activity, ArrowUpRight } from 'lucide-react';
 import { ScrollReveal } from './shared/ScrollReveal';
 import { InteractiveGridPattern } from '../ui/interactive-grid-pattern';
 
+import { useSession } from '../../hooks/useAuth';
+
 export function FinalCTA() {
+  const { data: sessionData } = useSession();
+  const isAuthenticated = Boolean(sessionData && ((sessionData as any).user || (sessionData as any).id));
+
   return (
     <section className="l-section border-b border-border/60 pb-16">
       <div className="l-container max-w-4xl">
@@ -42,10 +47,10 @@ export function FinalCTA() {
 
               <div className="flex items-center justify-center gap-3 flex-wrap">
                 <Link
-                  to="/signup"
+                  to={isAuthenticated ? '/dashboard' : '/signup'}
                   className="inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-primary-foreground font-bold text-xs uppercase font-mono tracking-wider hover:opacity-90 transition-all shadow-sm"
                 >
-                  <span>Launch Free Console</span>
+                  <span>{isAuthenticated ? 'Open Dashboard' : 'Launch Free Console'}</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link

@@ -3,9 +3,12 @@ import { motion, useReducedMotion } from 'motion/react';
 import { ArrowRight, Activity, Globe2, ChevronRight } from 'lucide-react';
 import { InteractiveGridPattern } from '../ui/interactive-grid-pattern';
 import { BorderBeam } from '../ui/border-beam';
+import { useSession } from '../../hooks/useAuth';
 
 export function HeroSection() {
   const prefersReducedMotion = useReducedMotion();
+  const { data: sessionData } = useSession();
+  const isAuthenticated = Boolean(sessionData && ((sessionData as any).user || (sessionData as any).id));
 
   const probePoints = [
     { region: 'us-east-1', latency: '18ms', status: 'HEALTHY', color: '#00E887' },
@@ -77,10 +80,10 @@ export function HeroSection() {
           transition={{ duration: 0.4, delay: 0.3 }}
         >
           <Link
-            to="/signup"
+            to={isAuthenticated ? '/dashboard' : '/signup'}
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-semibold text-xs uppercase tracking-wider font-mono hover:opacity-90 transition-all shadow-sm"
           >
-            <span>Deploy Fleet Monitor</span>
+            <span>{isAuthenticated ? 'Go to Dashboard' : 'Deploy Fleet Monitor'}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
           <Link

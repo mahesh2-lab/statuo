@@ -5,6 +5,8 @@ import { defineConfig } from "vite"
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Load centralized .env from repository root
+  envDir: path.resolve(__dirname, ".."),
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

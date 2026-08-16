@@ -4,6 +4,7 @@ import { Check, ArrowRight } from 'lucide-react';
 import { SectionHeader } from './shared/SectionHeader';
 import { ScrollReveal } from './shared/ScrollReveal';
 import { BorderBeam } from '../ui/border-beam';
+import { useSession } from '../../hooks/useAuth';
 
 const plans = [
   {
@@ -83,6 +84,8 @@ const plans = [
 
 export function PricingSection() {
   const [isYearly, setIsYearly] = useState(true);
+  const { data: sessionData } = useSession();
+  const isAuthenticated = Boolean(sessionData && ((sessionData as any).user || (sessionData as any).id));
 
   return (
     <section className="l-section border-b border-border/60 pb-16" id="pricing">
@@ -183,14 +186,14 @@ export function PricingSection() {
                   </div>
 
                   <Link
-                    to="/signup"
+                    to={isAuthenticated ? '/dashboard' : '/signup'}
                     className={`w-full py-2.5 px-4 text-xs font-mono font-bold uppercase text-center flex items-center justify-center gap-1.5 transition-all ${
                       isFeatured
                         ? 'bg-primary text-primary-foreground hover:opacity-90'
                         : 'bg-muted hover:bg-muted/80 text-foreground border border-border'
                     }`}
                   >
-                    <span>{plan.cta}</span>
+                    <span>{isAuthenticated ? 'Open Dashboard' : plan.cta}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>

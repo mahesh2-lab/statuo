@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Search, Moon, Sun, Laptop, ArrowRight } from 'lucide-react';
+import { Menu, X, Moon, Sun, Laptop, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTheme } from '../../context/useTheme';
+import { useSession } from '../../hooks/useAuth';
 
 export function LandingNav() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { theme, resolvedTheme, setTheme } = useTheme();
+  const { data: sessionData } = useSession();
+  const isAuthenticated = Boolean(sessionData && ((sessionData as any).user || (sessionData as any).id));
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 15);
@@ -54,12 +57,6 @@ export function LandingNav() {
               </span>
             </div>
           </Link>
-
-          {/* Operational Beacon */}
-          <div className="hidden xl:flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[11px] font-mono whitespace-nowrap">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-            <span>Systems Normal</span>
-          </div>
         </div>
 
         {/* Center: Navigation Links */}
@@ -98,21 +95,7 @@ export function LandingNav() {
 
         {/* Right: Search, Theme, Sign In, CTA */}
         <div className="flex items-center gap-2.5 shrink-0">
-          {/* Quick Search */}
-          <button
-            onClick={() => {
-              const evt = new KeyboardEvent('keydown', { key: 'k', metaKey: true });
-              window.dispatchEvent(evt);
-            }}
-            className="hidden sm:flex items-center gap-2 px-2.5 py-1 bg-muted/40 border border-border text-muted-foreground text-xs font-mono hover:border-foreground/30 hover:text-foreground transition-colors cursor-pointer"
-            title="Global Search (⌘K)"
-          >
-            <Search className="w-3.5 h-3.5 shrink-0" />
-            <span className="text-[11px] hidden md:inline">Search</span>
-            <kbd className="px-1 py-0.5 bg-background border border-border text-[9px] text-muted-foreground font-sans leading-none">
-              ⌘K
-            </kbd>
-          </button>
+          
 
           {/* Theme Toggle */}
           <button
@@ -124,22 +107,25 @@ export function LandingNav() {
             {getThemeIcon()}
           </button>
 
-          <div className="h-4 w-px bg-border hidden sm:block shrink-0" />
-
-          {/* Sign In */}
-          <Link
-            to="/login"
-            className="hidden sm:inline-flex items-center px-2.5 py-1.5 text-xs font-sans font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
-          >
-            Sign In
-          </Link>
+          {!isAuthenticated && (
+            <>
+              <div className="h-4 w-px bg-border hidden sm:block shrink-0" />
+              {/* Sign In */}
+              <Link
+                to="/login"
+                className="hidden sm:inline-flex items-center px-2.5 py-1.5 text-xs font-sans font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+              >
+                Sign In
+              </Link>
+            </>
+          )}
 
           {/* Primary CTA */}
           <Link
-            to="/signup"
+            to={isAuthenticated ? '/dashboard' : '/signup'}
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-all shadow-xs whitespace-nowrap shrink-0"
           >
-            <span>Launch Free</span>
+            <span>{isAuthenticated ? 'Dashboard' : 'Launch Free'}</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </Link>
 
@@ -202,20 +188,32 @@ export function LandingNav() {
               </Link>
             </div>
             <div className="pt-3 border-t border-border flex items-center justify-between">
-              <Link
-                to="/login"
-                onClick={() => setMobileOpen(false)}
-                className="px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
-              >
-                Sign In
-              </Link>
-              <Link
-                to="/signup"
-                onClick={() => setMobileOpen(false)}
-                className="px-4 py-1.5 text-xs bg-primary text-primary-foreground font-semibold"
-              >
-                Launch Free →
-              </Link>
+              {!isAuthenticated ? (
+                <>
+                  <Link
+                    to="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    to="/signup"
+                    onClick={() => setMobileOpen(false)}
+                    className="px-4 py-1.5 text-xs bg-primary text-primary-foreground font-semibold"
+                  >
+                    Launch Free →
+                  </Link>
+                </>
+              ) : (
+                <Link
+                  to="/dashboard"
+                  onClick={() => setMobileOpen(false)}
+                  className="w-full text-center px-4 py-2 text-xs bg-primary text-primary-foreground font-semibold"
+                >
+                  Go to Dashboard →
+                </Link>
+              )}
             </div>
           </motion.div>
         )}

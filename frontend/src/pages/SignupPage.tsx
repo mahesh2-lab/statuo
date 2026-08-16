@@ -59,14 +59,14 @@ export const SignupPage: React.FC = () => {
   }
 
   if (session && ((session as any).user || (session as any).id)) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   const onSubmit = async (data: SignupFormValues) => {
     try {
       await signUp({ name: data.name, email: data.email, password: data.password });
       toast.success('Account created successfully');
-      navigate('/');
+      navigate('/dashboard');
     } catch {
       // Handled by query error state
     }

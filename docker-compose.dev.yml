@@ -1,6 +1,9 @@
-name: statuo-backend-infra
+name: statuo-infra
 
 services:
+  # =========================================================================
+  # 1. PostgreSQL Database Service
+  # =========================================================================
   postgres:
     image: postgres:16-alpine
     container_name: statuo_postgres
@@ -19,7 +22,12 @@ services:
       timeout: 5s
       retries: 5
       start_period: 5s
+    networks:
+      - statuo_network
 
+  # =========================================================================
+  # 2. Redis Pub/Sub & Caching Service
+  # =========================================================================
   redis:
     image: redis:7-alpine
     container_name: statuo_redis
@@ -34,9 +42,17 @@ services:
       timeout: 5s
       retries: 5
       start_period: 5s
+    networks:
+      - statuo_network
 
+# Persistent Data Volumes
 volumes:
   postgres_data:
     driver: local
   redis_data:
     driver: local
+
+# Internal Network
+networks:
+  statuo_network:
+    driver: bridge

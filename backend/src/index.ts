@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "./libs/env";
 import path from "path";
 import fs from "fs";
 import express from "express";
@@ -52,9 +52,14 @@ if (fs.existsSync(clientDistPath)) {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
+import { runAutoMigrations } from "./db/migrate";
+
 // 6. Bootstrap Server & Distributed Scheduler Engine
 async function bootstrap() {
   try {
+    // 6.1 Ensure database tables and indexes exist
+    await runAutoMigrations();
+
     const server = app.listen(PORT, async () => {
       console.log(`[Statuo API] Server listening at http://localhost:${PORT}`);
       console.log(`[Statuo API] Better Auth endpoints mounted at /api/auth`);

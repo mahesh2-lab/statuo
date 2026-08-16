@@ -3,6 +3,8 @@ import { ShieldCheck, ArrowRight, Lock, Server, FileCheck } from 'lucide-react';
 import { ScrollReveal } from './shared/ScrollReveal';
 import { FlickeringGrid } from '../ui/flickering-grid';
 
+import { useSession } from '../../hooks/useAuth';
+
 const enterpriseItems = [
   {
     icon: Lock,
@@ -22,6 +24,9 @@ const enterpriseItems = [
 ];
 
 export function EnterpriseBand() {
+  const { data: sessionData } = useSession();
+  const isAuthenticated = Boolean(sessionData && ((sessionData as any).user || (sessionData as any).id));
+
   return (
     <section className="l-section border-b border-border/60 pb-16" id="enterprise">
       <div className="l-container">
@@ -74,10 +79,10 @@ export function EnterpriseBand() {
 
             <div className="flex items-center gap-3 flex-wrap pt-6 mt-2 border-t border-border/60">
               <Link
-                to="/signup"
+                to={isAuthenticated ? '/dashboard' : '/signup'}
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground font-semibold text-xs uppercase font-mono tracking-wider hover:opacity-90 transition-all shadow-xs"
               >
-                <span>Talk with Solutions Engineering</span>
+                <span>{isAuthenticated ? 'Open Fleet Dashboard' : 'Talk with Solutions Engineering'}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </Link>
               <Link

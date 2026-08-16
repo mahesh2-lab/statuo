@@ -183,10 +183,9 @@ Ensure you have the following installed locally:
 
 ### Option B: Local Development Setup
 
-#### 1. Start Database & Redis
-You can use Docker to quickly spin up only PostgreSQL and Redis:
+#### 1. Start Database & Redis Only (Infrastructure)
 ```bash
-docker compose up postgres redis -d
+docker compose -f docker-compose.dev.yml up -d
 ```
 
 #### 2. Backend Setup
