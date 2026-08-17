@@ -34,3 +34,23 @@ if (!process.env.REDIS_URL) {
   const redisPort = process.env.REDIS_PORT || "6379";
   process.env.REDIS_URL = `redis://${redisHost}:${redisPort}`;
 }
+
+// ── Fail-fast: catch missing required env vars before the app starts ──────────
+// On cloud platforms (Render, Railway, Fly.io) the .env file is NOT shipped
+// with the image — all secrets must be set as environment variables in the
+// platform's dashboard.
+const REQUIRED = [
+  "DATABASE_URL",
+  "REDIS_URL",
+  "BETTER_AUTH_SECRET",
+  "BETTER_AUTH_URL",
+];
+
+const missing = REQUIRED.filter((key) => !process.env[key]);
+if (missing.length > 0) {
+  console.error(
+    `[Config:FATAL] Missing required environment variables: ${missing.join(", ")}\n` +
+    `Set them in your platform's environment variables dashboard (Render → Environment, Railway → Variables, etc.)`
+  );
+  process.exit(1);
+}
