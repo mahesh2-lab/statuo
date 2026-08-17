@@ -14,7 +14,7 @@ RUN pnpm config set fetch-retries 5 && \
 
 # Copy dependency definitions and install
 COPY frontend/package.json frontend/pnpm-lock.yaml* frontend/pnpm-workspace.yaml* ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-workspace
 
 # Copy frontend source code
 COPY frontend ./
@@ -35,7 +35,7 @@ RUN pnpm config set fetch-retries 5 && \
 
 # Copy dependency definitions and install
 COPY backend/package.json backend/pnpm-lock.yaml* backend/pnpm-workspace.yaml* ./
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-workspace
 
 # --- Stage 3: Production Runtime ---
 FROM node:22-alpine AS runner
