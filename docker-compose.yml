@@ -1,53 +1,47 @@
 name: statuo
 
 services:
-  # =========================================================================
-  # 1. PostgreSQL Database Service
-  # =========================================================================
-  postgres:
-    image: postgres:16-alpine
-    container_name: statuo_postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-statuo_db}
-      POSTGRES_USER: ${POSTGRES_USER:-statuo_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-2004}
-    ports:
-      - "${POSTGRES_PORT:-5432}:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-statuo_user} -d ${POSTGRES_DB:-statuo_db}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
-    networks:
-      - statuo_network
+  # # 1. PostgreSQL Database Service
+  # postgres:
+  #   image: postgres:16-alpine
+  #   container_name: statuo_postgres
+  #   restart: unless-stopped
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB:-statuo_db}
+  #     POSTGRES_USER: ${POSTGRES_USER:-statuo_user}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-2004}
+  #   ports:
+  #     - "${POSTGRES_PORT:-5432}:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   healthcheck:
+  #     test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-statuo_user} -d ${POSTGRES_DB:-statuo_db}" ]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 5s
+  #   networks:
+  #     - statuo_network
 
-  # =========================================================================
-  # 2. Redis Pub/Sub & Caching Service
-  # =========================================================================
-  redis:
-    image: redis:7-alpine
-    container_name: statuo_redis
-    restart: unless-stopped
-    ports:
-      - "${REDIS_PORT:-6379}:6379"
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
-    networks:
-      - statuo_network
+  # # 2. Redis Pub/Sub & Caching Service
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: statuo_redis
+  #   restart: unless-stopped
+  #   ports:
+  #     - "${REDIS_PORT:-6379}:6379"
+  #   volumes:
+  #     - redis_data:/data
+  #   healthcheck:
+  #     test: [ "CMD", "redis-cli", "ping" ]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 5s
+  #   networks:
+  #     - statuo_network
 
-  # =========================================================================
   # 3. Statuo Unified Fullstack Application (Frontend + Backend + Scheduler)
-  # =========================================================================
   app:
     build:
       context: .
@@ -57,21 +51,28 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      DATABASE_URL: postgresql://${POSTGRES_USER:-statuo_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-statuo_db}
-      REDIS_URL: redis://redis:6379
-      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+      DATABASE_URL: ${DATABASE_URL}
+      REDIS_URL: ${REDIS_URL}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_API_KEY: ${BETTER_AUTH_API_KEY}
-      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+      CORS_ORIGIN: ${CORS_ORIGIN}
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -O /dev/null --spider http://localhost:3000/api/health" ]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
     ports:
       - "${PORT:-3000}:3000"
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - statuo_network
+    # Use the default Docker bridge so outbound internet traffic (e.g. Neon DB
+    # on port 5432) is routed via the host NAT – same path as bare `docker run`.
+    network_mode: bridge
+    # depends_on:
+    #   postgres:
+    #     condition: service_healthy
+    #   redis:
+    #     condition: service_healthy
 
 # Persistent Data Volumes
 volumes:
@@ -79,8 +80,3 @@ volumes:
     driver: local
   redis_data:
     driver: local
-
-# Internal Network
-networks:
-  statuo_network:
-    driver: bridge

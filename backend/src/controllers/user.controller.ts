@@ -22,7 +22,7 @@ export const getCurrentUser = asyncHandler(async (req: Request, res: Response) =
  * Comprehensive System Health Check
  * GET /health, GET /api/health, GET /api/v1/health
  */
-export const getHealthCheck = asyncHandler(async (req: Request, res: Response) => {
+export const    getHealthCheck = asyncHandler(async (req: Request, res: Response) => {
   const checks: Record<string, { status: string; latencyMs?: number; error?: string }> = {};
 
   // 1. PostgreSQL Database Check

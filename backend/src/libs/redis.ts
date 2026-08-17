@@ -2,7 +2,11 @@ import Redis from "ioredis";
 
 const REDIS_URL = process.env.REDIS_URL || "redis://localhost:6379";
 
-export const redisPublisher = new Redis(REDIS_URL, {
+export const redisPublisher = new Redis({
+  password: "JcgxC2tTyzB527p8iUUJDdBH7MtpRgt3",
+  username: "default",
+  host: "bubble-leg-buttermilk-71430.db.redis.io",
+  port: 19766,
   maxRetriesPerRequest: null,
   retryStrategy(times) {
     const delay = Math.min(times * 100, 3000);
@@ -10,7 +14,12 @@ export const redisPublisher = new Redis(REDIS_URL, {
   },
 });
 
-export const redisSubscriber = new Redis(REDIS_URL, {
+
+export const redisSubscriber = new Redis({
+  password: "JcgxC2tTyzB527p8iUUJDdBH7MtpRgt3",
+  username: "default",
+  host: "bubble-leg-buttermilk-71430.db.redis.io",
+  port: 19766,
   maxRetriesPerRequest: null,
   retryStrategy(times) {
     const delay = Math.min(times * 100, 3000);

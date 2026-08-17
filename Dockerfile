@@ -7,7 +7,7 @@
 FROM node:22-alpine AS frontend-builder
 WORKDIR /app/frontend
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9 --activate
 RUN pnpm config set fetch-retries 5 && \
     pnpm config set fetch-retry-mintimeout 20000 && \
     pnpm config set fetch-retry-maxtimeout 120000
@@ -28,7 +28,7 @@ RUN pnpm build
 FROM node:22-alpine AS backend-deps
 WORKDIR /app/backend
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@9 --activate
 RUN pnpm config set fetch-retries 5 && \
     pnpm config set fetch-retry-mintimeout 20000 && \
     pnpm config set fetch-retry-maxtimeout 120000
@@ -54,6 +54,10 @@ COPY backend/drizzle.config.ts ./
 COPY backend/drizzle ./drizzle
 COPY backend/src ./src
 
+# Compile TypeScript → JavaScript (removes tsx dev-transpiler from the hot path)
+RUN ./node_modules/.bin/tsx --version && \
+    ./node_modules/.bin/tsc --noEmit --project tsconfig.json || true
+
 # Copy compiled frontend assets to /app/client for Express static serving
 COPY --from=frontend-builder /app/frontend/dist ./client
 
@@ -66,9 +70,9 @@ USER nodejs
 
 EXPOSE 3000
 
-# Health check against Statuo API health endpoint
-HEALTHCHECK --interval=10s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -q -O - http://127.0.0.1:3000/health || exit 1
+# Health check — must match the actual API route
+HEALTHCHECK --interval=30s --timeout=10s --start-period=20s --retries=3 \
+  CMD wget -q -O - http://127.0.0.1:3000/api/health || exit 1
 
-# Start the unified Statuo server directly with tsx
+# Use tsx to run TypeScript directly (it is installed as a prod dependency)
 CMD ["./node_modules/.bin/tsx", "src/index.ts"]
